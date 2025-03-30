@@ -1,95 +1,78 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import YouTubePlayer from '@/components/YouTubePlayer';
 import { useParams } from 'next/navigation';
+import VideoPlayer from '@/app/components/VideoPlayer';
 
-interface VideoDetails {
+interface Video {
   id: string;
   title: string;
   description: string;
-  channelTitle: string;
-  publishedAt: string;
+  videoId: string;
+  thumbnailUrl: string;
+  uploadedBy: string;
+  createdAt: string;
 }
 
 export default function WatchPage() {
   const params = useParams();
-  const videoId = params.videoId as string;
-  const [video, setVideo] = useState<VideoDetails | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [video, setVideo] = useState<Video | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchVideoDetails = async () => {
+    const fetchVideo = async () => {
       try {
-        setIsLoading(true);
-        const response = await fetch(`/api/videos/${videoId}`);
-        if (!response.ok) {
-          throw new Error('ভিডিও লোড করা যায়নি');
-        }
+        const response = await fetch(`/api/videos/${params.videoId}`);
         const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'ভিডিও লোড করা যায়নি');
+        }
+
         setVideo(data.video);
       } catch (error) {
         console.error('Error fetching video:', error);
-        setError('ভিডিও লোড করতে সমস্যা হয়েছে');
+        setError(error instanceof Error ? error.message : 'ভিডিও লোড করা যায়নি');
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (videoId) {
-      fetchVideoDetails();
+    if (params.videoId) {
+      fetchVideo();
     }
-  }, [videoId]);
+  }, [params.videoId]);
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-900 p-4 sm:p-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="animate-pulse">
-            <div className="aspect-video bg-gray-800 rounded-xl mb-6"></div>
-            <div className="h-8 bg-gray-800 rounded w-3/4 mb-4"></div>
-            <div className="h-4 bg-gray-800 rounded w-1/2"></div>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black p-6">
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
         </div>
       </div>
     );
   }
 
-  if (error) {
+  if (error || !video) {
     return (
-      <div className="min-h-screen bg-gray-900 p-4 sm:p-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center text-red-500 p-8 bg-red-500/10 rounded-xl">
-            <h2 className="text-xl font-bold mb-2">এরর</h2>
-            <p>{error}</p>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black p-6">
+        <div className="max-w-4xl mx-auto bg-white/5 backdrop-blur-lg rounded-xl p-6">
+          <h1 className="text-xl text-red-500">
+            {error || 'ভিডিও পাওয়া যায়নি'}
+          </h1>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 p-4 sm:p-8">
-      <div className="max-w-6xl mx-auto">
-        <YouTubePlayer 
-          videoId={videoId} 
-          title={video?.title}
-          className="mb-6"
-        />
-        
-        {video && (
-          <div className="text-white">
-            <h1 className="text-2xl font-bold mb-4">{video.title}</h1>
-            <div className="flex items-center text-gray-400 text-sm mb-6">
-              <span>{video.channelTitle}</span>
-              <span className="mx-2">•</span>
-              <span>{new Date(video.publishedAt).toLocaleDateString()}</span>
-            </div>
-            <p className="text-gray-300 whitespace-pre-wrap">{video.description}</p>
-          </div>
-        )}
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black p-6">
+      <VideoPlayer
+        videoId={video.videoId}
+        title={video.title}
+        description={video.description}
+      />
     </div>
   );
 } 

@@ -61,126 +61,71 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('ভিডিও আপলোড রিকোয়েস্ট পাওয়া গেছে');
-
   try {
-    // Validate session
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.email) {
-      console.log('সেশন পাওয়া যায়নি');
-      return NextResponse.json({
-        error: 'অনুগ্রহ করে আগে লগইন করুন',
-        code: 'AUTH_REQUIRED'
-      }, { status: 401 });
+      return NextResponse.json({ error: 'অনুগ্রহ করে আগে লগইন করুন' }, { status: 401 });
     }
 
     if (session.user.email !== 'oearnfycompany@gmail.com') {
-      console.log('অননুমোদিত ব্যবহারকারী:', session.user.email);
-      return NextResponse.json({
-        error: 'আপনার ভিডিও আপলোড করার অনুমতি নেই',
-        code: 'UNAUTHORIZED'
-      }, { status: 403 });
+      return NextResponse.json({ error: 'আপনার ভিডিও আপলোড করার অনুমতি নেই' }, { status: 403 });
     }
 
-    // Parse request body
     let body;
     try {
       body = await request.json();
     } catch (error) {
-      console.error('রিকোয়েস্ট বডি পার্স করতে এরর:', error);
-      return NextResponse.json({
-        error: 'অবৈধ JSON ডেটা',
-        code: 'INVALID_JSON'
-      }, { status: 400 });
+      return NextResponse.json({ error: 'অবৈধ রিকোয়েস্ট ডেটা' }, { status: 400 });
+    }
+    
+    if (!body?.videoUrl) {
+      return NextResponse.json({ error: 'ভিডিও URL প্রদান করুন' }, { status: 400 });
     }
 
-    const { videoUrl } = body;
-
-    if (!videoUrl?.trim()) {
-      console.log('ভিডিও URL দেওয়া হয়নি');
-      return NextResponse.json({
-        error: 'ভিডিও URL প্রয়োজন',
-        code: 'MISSING_URL'
-      }, { status: 400 });
-    }
-
-    if (!isValidYouTubeUrl(videoUrl)) {
-      console.log('অবৈধ YouTube URL:', videoUrl);
-      return NextResponse.json({
-        error: 'অবৈধ YouTube URL। সঠিক ফরম্যাট: https://youtu.be/... বা https://www.youtube.com/watch?v=...',
-        code: 'INVALID_URL'
-      }, { status: 400 });
-    }
-
+    const videoUrl = body.videoUrl;
     const videoId = extractVideoId(videoUrl);
+
     if (!videoId) {
-      console.log('ভিডিও ID পাওয়া যায়নি');
-      return NextResponse.json({
-        error: 'ভিডিও ID পাওয়া যায়নি',
-        code: 'INVALID_URL'
-      }, { status: 400 });
+      return NextResponse.json({ error: 'অবৈধ YouTube ভিডিও URL' }, { status: 400 });
     }
 
-    const apiKey = process.env.YOUTUBE_API_KEY;
-    if (!apiKey) {
-      console.log('YouTube API কী পাওয়া যায়নি');
-      return NextResponse.json({
-        error: 'YouTube API কী কনফিগার করা হয়নি। অনুগ্রহ করে .env.local ফাইলে YOUTUBE_API_KEY সেট করুন।',
-        code: 'MISSING_API_KEY'
-      }, { status: 500 });
+    if (!process.env.YOUTUBE_API_KEY) {
+      return NextResponse.json({ error: 'YouTube API কী কনফিগার করা হয়নি' }, { status: 500 });
     }
 
-    console.log('YouTube API থেকে ভিডিও তথ্য আনা হচ্ছে');
-    const response = await fetch(
-      `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`,
-      {
-        headers: {
-          'Accept': 'application/json'
-        },
-        cache: 'no-store'
-      }
+    const videoData = await fetch(
+      `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${process.env.YOUTUBE_API_KEY}`
     );
 
-    if (!response.ok) {
-      console.error('YouTube API এরর:', await response.text());
-      return NextResponse.json({
-        error: 'YouTube API থেকে ভিডিও তথ্য আনতে সমস্যা হয়েছে',
-        code: 'YOUTUBE_API_ERROR'
-      }, { status: 500 });
+    if (!videoData.ok) {
+      return NextResponse.json({ error: 'YouTube API থেকে ভিডিও তথ্য পাওয়া যায়নি' }, { status: 500 });
     }
 
-    const data = await response.json();
-    if (!data.items?.length) {
-      console.log('ভিডিও পাওয়া যায়নি:', videoId);
-      return NextResponse.json({
-        error: 'ভিডিও পাওয়া যায়নি',
-        code: 'VIDEO_NOT_FOUND'
-      }, { status: 404 });
+    const youtubeData = await videoData.json();
+
+    if (!youtubeData.items || youtubeData.items.length === 0) {
+      return NextResponse.json({ error: 'ভিডিও পাওয়া যায়নি' }, { status: 404 });
     }
 
-    const videoInfo = data.items[0].snippet;
-    const video = await prisma.video.create({
+    const video = youtubeData.items[0].snippet;
+    const thumbnails = video.thumbnails;
+    const bestThumbnail = thumbnails.maxres || thumbnails.standard || thumbnails.high || thumbnails.medium || thumbnails.default;
+
+    const newVideo = await prisma.video.create({
       data: {
-        videoId,
-        title: videoInfo.title,
-        description: videoInfo.description,
-        thumbnail: videoInfo.thumbnails.high?.url || videoInfo.thumbnails.default?.url,
-        channelTitle: videoInfo.channelTitle,
-        publishedAt: new Date(videoInfo.publishedAt)
-      }
+        title: video.title,
+        description: video.description,
+        videoId: videoId,
+        thumbnailUrl: bestThumbnail.url,
+        uploadedBy: session.user.email,
+      },
     });
 
-    console.log('ভিডিও সফলভাবে যোগ করা হয়েছে:', video);
-    return NextResponse.json({
-      success: true,
-      video
-    });
+    return NextResponse.json({ video: newVideo }, { status: 201 });
+
   } catch (error) {
-    console.error('ভিডিও যোগ করতে এরর:', error);
-    return NextResponse.json({
-      error: 'ভিডিও যোগ করা যায়নি',
-      code: 'INTERNAL_ERROR'
-    }, { status: 500 });
+    console.error('Video upload error:', error);
+    return NextResponse.json({ error: 'ভিডিও আপলোড করা যায়নি' }, { status: 500 });
   }
 } 

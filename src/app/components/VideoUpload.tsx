@@ -55,6 +55,7 @@ export default function VideoUpload({ onVideoAdded }: VideoUploadProps) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({ videoUrl: videoUrl.trim() })
       });
