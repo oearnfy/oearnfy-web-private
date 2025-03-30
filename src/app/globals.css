@@ -1,0 +1,675 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+  touch-action: pan-x pan-y;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure proper sizing on mobile devices */
+html {
+  -webkit-text-size-adjust: 100%;
+  height: -webkit-fill-available;
+  height: 100dvh;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Animation Keyframes */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes pulse-slower {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animation Classes */
+.animate-pulse-slow {
+  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-pulse-slower {
+  animation: pulse-slower 6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* Better touch interactions */
+button, a {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
+  isolation: isolate;
+}
+
+/* Focus styles */
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* Active button state */
+button:active {
+  transform: translateY(1px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Custom Selection */
+::selection {
+  background: rgba(56, 189, 248, 0.2);
+  color: #fff;
+}
+
+/* Input Autofill Styles */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: white;
+  -webkit-box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0.1) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Advanced Button Animations */
+
+/* Side Ping Animations */
+@keyframes ping-slow {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes ping-slower {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+}
+
+/* Vertical Energy Flow */
+@keyframes energy-flow-vertical {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes energy-flow-vertical-reverse {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+/* Corner Pulse Animation */
+@keyframes corner-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    border-color: rgba(96, 165, 250, 0.3);
+  }
+  50% {
+    opacity: 1;
+    border-color: rgba(96, 165, 250, 1);
+  }
+}
+
+/* Border Flow Animation */
+@keyframes border-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Grid Slide Animation */
+@keyframes grid-slide {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -20px -20px;
+  }
+}
+
+/* Particle Animations */
+@keyframes particle-1 {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-20px, -20px);
+    opacity: 0;
+  }
+}
+
+@keyframes particle-2 {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(20px, -20px);
+    opacity: 0;
+  }
+}
+
+@keyframes particle-3 {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, -30px);
+    opacity: 0;
+  }
+}
+
+/* Energy Pulse Animation */
+@keyframes energy-pulse {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%) translateY(-50%);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%) translateY(-50%);
+  }
+}
+
+/* Pulse Animations */
+@keyframes pulse-fast {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Side Wave Animation */
+@keyframes side-wave {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+}
+
+/* Jump Effect */
+@keyframes jump {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.02);
+  }
+}
+
+/* Side Sparkle Animation */
+@keyframes side-sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animation Classes */
+.animate-ping-slow {
+  animation: ping-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-ping-slower {
+  animation: ping-slower 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-energy-flow-vertical {
+  animation: energy-flow-vertical 2s linear infinite;
+}
+
+.animate-energy-flow-vertical-reverse {
+  animation: energy-flow-vertical-reverse 2s linear infinite;
+}
+
+.animate-corner-pulse {
+  animation: corner-pulse 2s ease-in-out infinite;
+}
+
+.animate-border-flow {
+  animation: border-flow 4s linear infinite;
+  background-size: 200% auto;
+}
+
+.animate-grid-slide {
+  animation: grid-slide 20s linear infinite;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.animate-particle-1 {
+  animation: particle-1 2s ease-out infinite;
+}
+
+.animate-particle-2 {
+  animation: particle-2 2.5s ease-out infinite;
+  animation-delay: 0.3s;
+}
+
+.animate-particle-3 {
+  animation: particle-3 2.2s ease-out infinite;
+  animation-delay: 0.6s;
+}
+
+.animate-energy-pulse {
+  animation: energy-pulse 2s linear infinite;
+}
+
+.animate-pulse-fast {
+  animation: pulse-fast 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-side-wave {
+  animation: side-wave 2s ease-in-out infinite;
+}
+
+.animate-jump {
+  animation: jump 0.5s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.animate-side-sparkle {
+  animation: side-sparkle 1.5s ease-out infinite;
+}
+
+/* Logo Animations */
+@keyframes logo-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes logo-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes logo-glow {
+  0%, 100% {
+    opacity: 0.5;
+    filter: blur(8px);
+  }
+  50% {
+    opacity: 1;
+    filter: blur(12px);
+  }
+}
+
+@keyframes logo-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes logo-border-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Advanced Logo Animations */
+@keyframes logo-orbit {
+  0% {
+    transform: rotate(0deg) translateX(6px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(6px) rotate(-360deg);
+  }
+}
+
+@keyframes logo-bounce {
+  0%, 100% {
+    transform: translateY(0) translateX(-2px) scale(1);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(-6px) translateX(2px) scale(1.02);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+@keyframes logo-wobble {
+  0%, 100% {
+    transform: rotate(-4deg) translateX(-2px);
+  }
+  25% {
+    transform: rotate(0deg) translateX(2px);
+  }
+  50% {
+    transform: rotate(4deg) translateX(-2px);
+  }
+  75% {
+    transform: rotate(0deg) translateX(2px);
+  }
+}
+
+@keyframes logo-morph {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70%/60% 30% 70% 40%;
+    transform: translateX(-2px);
+  }
+  25% {
+    border-radius: 45% 55% 50% 50%/45% 55% 45% 55%;
+    transform: translateX(2px);
+  }
+  50% {
+    border-radius: 30% 60% 70% 40%/50% 60% 30% 60%;
+    transform: translateX(-2px);
+  }
+  75% {
+    border-radius: 55% 45% 50% 50%/55% 45% 55% 45%;
+    transform: translateX(2px);
+  }
+}
+
+@keyframes logo-shine {
+  0% {
+    background-position: -100% 0;
+    transform: translateX(-3px);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+  100% {
+    background-position: 200% 0;
+    transform: translateX(-3px);
+  }
+}
+
+@keyframes logo-ripple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    transform: translateX(-2px);
+  }
+  50% {
+    transform: translateX(2px);
+  }
+  100% {
+    box-shadow: 0 0 0 20px rgba(59, 130, 246, 0);
+    transform: translateX(-2px);
+  }
+}
+
+@keyframes quick-side-bounce {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+/* Logo Animation Classes */
+.animate-logo-float {
+  animation: logo-float 6s ease-in-out infinite;
+}
+
+.animate-logo-rotate {
+  animation: logo-rotate 20s linear infinite;
+}
+
+.animate-logo-glow {
+  animation: logo-glow 3s ease-in-out infinite;
+}
+
+.animate-logo-pulse {
+  animation: logo-pulse 4s ease-in-out infinite;
+}
+
+.animate-logo-border-spin {
+  animation: logo-border-spin 8s linear infinite;
+}
+
+.animate-logo-orbit {
+  animation: logo-orbit 8s linear infinite;
+}
+
+.animate-logo-bounce {
+  animation: logo-bounce 1.5s ease-in-out infinite;
+}
+
+.animate-logo-wobble {
+  animation: logo-wobble 4s ease-in-out infinite;
+}
+
+.animate-logo-morph {
+  animation: logo-morph 6s ease-in-out infinite;
+}
+
+.animate-logo-shine {
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.3), 
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: logo-shine 3s linear infinite;
+}
+
+.animate-logo-ripple {
+  animation: logo-ripple 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.animate-quick-side-bounce {
+  animation: quick-side-bounce 0.8s ease-in-out infinite;
+}
+
+/* Safe area insets for modern mobile devices */
+@supports(padding: max(0px)) {
+  .safe-area-inset-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* Smooth scrolling */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Better button tap targets on mobile */
+button {
+  min-height: 44px;
+}
+
+/* Prevent text overflow */
+h1, h2, p {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+.hover-trigger:hover .hover-rotate {
+  transform: rotate(180deg);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-trigger:hover .hover-scale {
+  transform: scale(1.1);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Stars Animation */
+.stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: transparent url('/stars.png') repeat top center;
+  z-index: 0;
+  animation: move-twinkle-back 200s linear infinite;
+}
+
+.twinkling {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: transparent url('/twinkling.png') repeat top center;
+  z-index: 1;
+  animation: move-twinkle-back 150s linear infinite;
+  opacity: 0.5;
+}
+
+@keyframes move-twinkle-back {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -10000px 5000px;
+  }
+} 
